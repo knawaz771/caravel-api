@@ -1,0 +1,37 @@
+name: Laravel CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy env
+        run: cp .env.example .env
+
+      - name: Build Docker containers
+        run: docker compose up -d --build
+
+      - name: Install Composer Dependencies
+        run: docker compose exec -T app composer install
+
+      - name: Generate app key
+        run: docker compose exec -T app php artisan key:generate
+
+      - name: Run migrations
+        run: docker compose exec -T app php artisan migrate
+
+      - name: Run tests
+        run: docker compose exec -T app php artisan test
