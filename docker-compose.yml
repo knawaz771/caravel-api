@@ -3,7 +3,15 @@ services:
         build: .
         volumes:
             - .:/app
-
+    mysql:
+        image: mysql:8.0
+        container_name: my-api-mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: my_api
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: secret
     nginx:
         image: nginx:latest
         ports:

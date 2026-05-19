@@ -29,19 +29,9 @@ jobs:
 
       - name: Generate app key
         run: docker compose exec -T app php artisan key:generate
-      - name: Prepare SQLite DB
-        run: |
-          touch database/database.sqlite
+
       - name: Run migrations
-        run: |
-          docker compose exec -T \
-          -e DB_CONNECTION=sqlite \
-          -e DB_DATABASE=/var/www/database/database.sqlite \
-          app php artisan migrate
+        run: docker compose exec -T app php artisan migrate
 
       - name: Run tests
-        run: |
-          docker compose exec -T \
-          -e DB_CONNECTION=sqlite \
-          -e DB_DATABASE=/var/www/database/database.sqlite \
-          app php artisan test
+        run: docker compose exec -T app php artisan test
