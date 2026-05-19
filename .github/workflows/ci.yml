@@ -24,14 +24,29 @@ jobs:
       - name: Build Docker containers
         run: docker compose up -d --build
 
+      - name: Wait for MySQL
+        run: sleep 25
+
+      - name: Configure Environment
+        run: |
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=mysql" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=my_api" >> .env
+          echo "DB_USERNAME=laravel" >> .env
+          echo "DB_PASSWORD=secret" >> .env
+
       - name: Install Composer Dependencies
         run: docker compose exec -T app composer install
 
       - name: Generate app key
         run: docker compose exec -T app php artisan key:generate
 
+      - name: Clear config cache
+        run: docker compose exec -T app php artisan config:clear
+
       - name: Run migrations
-        run: docker compose exec -T app php artisan migrate
+        run: docker compose exec -T app php artisan migrate --force
 
       - name: Run tests
         run: docker compose exec -T app php artisan test
