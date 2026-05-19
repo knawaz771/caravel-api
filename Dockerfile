@@ -2,6 +2,8 @@ FROM php:8.3-fpm
 
 WORKDIR /app
 
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 COPY . .
 
 RUN docker-php-ext-install pdo pdo_mysql
